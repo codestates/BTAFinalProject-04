@@ -24,11 +24,15 @@ const { Harmony } = require('@harmony-js/core');
 const { Wallet } = require('@harmony-js/account');
 const { Account } = require('@harmony-js/account');
 
+const Web3 = require('web3');
+const BN = require('bn.js');
+
 const harmony = new Harmony('https://api.s0.b.hmny.io', {
   chainId: 2,
   chainType: 'hmy'
 });
 
+/*
 const hmy = new Harmony(
   'https://api.s0.b.hmny.io/',
   {
@@ -36,6 +40,7 @@ const hmy = new Harmony(
       chainId: ChainID.HmyTestnet,
   },
 );
+*/
 
 const { HttpProvider, Messenger } = require('@harmony-js/network'); 
 
@@ -47,7 +52,7 @@ const factory = new TransactionFactory();
 
 
 router.post("/newWallet", async (req, res) => {
-  const { password } = req.body;
+  const { id, password } = req.body;
   try {
       
       const seed = Wallet.generateMnemonic()
@@ -56,28 +61,37 @@ router.post("/newWallet", async (req, res) => {
       const signer = harmony.wallet.addByMnemonic(seed, 0)
       console.log('signer : ' + signer);
       console.log('signer privateKey : ' + signer.privateKey);
+      console.log('signer publicKey : ' + signer.publicKey);
       console.log('signer checksumAddress : ' + signer.checksumAddress);
+      console.log('signer address : ' + signer.address);
+      
 
+      //encryptAccount
       const encryptAcc = await harmony.wallet.encryptAccount(signer.address, password)
-      console.log('res : ' + encryptAcc);
+      console.log('res : ' + encryptAcc.privateKey);
 
       const accountInfo = {
-        accountName: 'TEST',
+        accountName: id,
         address: signer.checksumAddress
       }
 
       console.log('Account is to be saved:', accountInfo);
 
+      //account find to checksumAddress
       const foundAccount = harmony.wallet.getAccount(accountInfo.address)
+      console.log('foundAccount:', foundAccount);
 
+      
       console.log('Signer is to encrypted:', harmony.wallet.signer.privateKey);
       
+
+      console.log('harmony.wallet.signer.address:', harmony.wallet.signer.address);
+      console.log('password:', password);
+
       const resultDecryptAcc = await harmony.wallet.decryptAccount(
         harmony.wallet.signer.address,
         password
       )
-
-      console.log(resultDecryptAcc);
 
       console.log(
         'Account is now decrypted, you got the private key:',
@@ -126,14 +140,85 @@ router.post("/newWallet", async (req, res) => {
   });
   
 
+  function logOutPut(title, content) {
+    console.log(
+      '---------------------------------------------------------------------'
+    )
+    console.log(`==> Log: ${title}`)
+    console.log(
+      '---------------------------------------------------------------------'
+    )
+    console.log()
+    console.log(content)
+    console.log()
+  }
+
 
   router.post("/sendTransaction", async (req, res) => {
     const { prvKey, toAddress, amount } = req.body;
     try {
-
-      const Web3 = require('web3');
-      const BN = require('bn.js');
       
+      HMY_TESTNET_RPC_URL = 'https://api.s0.b.hmny.io';
+
+      const web3 = new Web3(HMY_TESTNET_RPC_URL);
+
+      const sender = harmony.wallet.addByPrivateKey(prvKey)
+
+      const receiver = toAddress //'0x10A02A0a6e95a676AE23e2db04BEa3D1B8b7ca2E'
+      
+      const txnObjects = {
+        nonce: 0,
+        gasPrice: new BN(await web3.eth.getGasPrice()).mul(new BN(1)),
+        gasLimit: '6721900', 
+        shardID: 0,
+        to: receiver,
+        value: amount * 1e18,
+        data: '0x'
+      }
+
+      const balance = await harmony.blockchain.getBalance({
+        address: sender.address
+      })
+      logOutPut('senderBalance', balance.result)
+
+      const nonce = await harmony.blockchain.getTransactionCount({
+        address: sender.address
+      })
+      logOutPut('senderNonce', nonce.result)
+  
+      const tx = harmony.transactions.newTx({
+        nonce: txnObjects.nonce,  //txnObjects.nonce,
+        gasPrice: new harmony.utils.Unit(txnObjects.gasPrice).asWei().toWei(),
+        gasLimit: new harmony.utils.Unit(txnObjects.gasLimit).asWei().toWei(),
+        shardID: txnObjects.shardID,
+        to: harmony.crypto.getAddress(txnObjects.to).checksum,
+        value: new harmony.utils.Unit(txnObjects.value).asWei().toWei(),
+        data: txnObjects.data
+      })
+      
+      const signed = await sender.signTransaction(tx, true)
+      logOutPut('Signed Transation', signed.txParams)
+      logOutPut('rawTransaction', signed.getRawTransaction())
+      const [Transaction, hash] = await signed.sendTransaction()
+      logOutPut('Transaction Hash', hash)
+      // from here on, we use hmy_getTransactionRecept and hmy_blockNumber Rpc api
+      // if backend side is not done yet, please delete them from here
+      const confirmed = await Transaction.confirm(hash)
+      logOutPut('Transaction Receipt', confirmed.receipt)
+      if (confirmed.isConfirmed()) {
+        const senderUpdated = await harmony.blockchain.getBalance({
+          address: sender.address
+        })
+        logOutPut('Sender balance', senderUpdated.result)
+        const receiverUpdated = await harmony.blockchain.getBalance({
+          address: receiver
+        })
+        logOutPut('Receiver balance', receiverUpdated.result)
+        //process.exit()
+      }
+
+
+/*      
       HMY_PRIVATE_KEY = prvKey;
       HMY_TESTNET_RPC_URL = 'https://api.s0.b.hmny.io';
       
@@ -166,50 +251,24 @@ router.post("/newWallet", async (req, res) => {
       
       const newAddrBalance = await web3.eth.getBalance(toAddress);
       console.log('New account balance: ', newAddrBalance / 1e18);
+*/
+      return res.json(confirmed.receipt);
 
-      return res.json(result);
 
-/*
-      const hmy = new Harmony(
-        'https://api.s0.b.hmny.io/',
-        {
-            chainType: ChainType.Harmony,
-            chainId: ChainID.HmyTestnet,
-        }
-      );
-
-      const txn = factory.newTx({
-        to: toAddress,
-        //value: new Unit(1).asOne().toWei(),
-        value: new Unit(amount).asOne().toWei(),
-        // gas limit, you can use string
-        gasLimit: '21000',
-        // send token from shardID
-        shardID: 0,
-        // send token to toShardID
-        toShardID: 0,
-        // gas Price, you can use Unit class, and use Gwei, then remember to use toWei(), which will be transformed to BN
-        gasPrice: new Unit('1').asGwei().toWei(),
-      });
-
-      hmy.wallet.addByPrivateKey('45e497bd45a9049bcb649016594489ac67b9f052a6cdf5cb74ee2427a60bf25e');
-
-      hmy.wallet.signTransaction(txn).then(signedTxn => {
-        signedTxn.sendTransaction().then(([tx, hash]) => {
-          console.log('tx hash: ' + hash);
-          signedTxn.confirm(hash).then(response => {
-            console.log(response.receipt);
-            return res.json(hash);
-          });
-        });
-      });
-
-    */
 
     } catch (err) {
       console.log(err);
     }
   });  
 
+  
+
+  router.post("/keyStoreFile", async (req, res) => {
+    const passphrase = '';
+    const account = new Account('45e497bd45a9049bcb649016594489ac67b9f052a6cdf5cb74ee2427a60bf25e');
+    account.toFile(passphrase).then(keystore => {
+        console.log(keystore);
+    });
+  });
 
   module.exports = router;
