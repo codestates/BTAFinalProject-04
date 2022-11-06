@@ -1,0 +1,82 @@
+openapi: "3.0.3"
+info:
+  title: "BTA03_dApp_Back"
+  description: "BTA03_dApp API"
+  contact:
+  version: "1.0.0"
+tags:
+  - name: "BLOCKCHAIN"
+    description: "BLOCKCHAIN API"
+paths:
+  $ref: "./path.yaml"
+security:
+  - api_key: []
+    app_chk: []
+components:
+  parameters:
+    offsetParam: # Can be referenced via '#/components/parameters/offsetParam'
+      in: query
+      name: offset
+      description: Number of items to skip before returning the results.
+      required: false
+      schema:
+        type: integer
+        format: int32
+        default: 0
+    limitParam: # Can be referenced via '#/components/parameters/limitParam'
+      in: query
+      name: limit
+      description: Maximum number of items to return.
+      required: false
+      schema:
+        type: integer
+        format: int32
+        default: 10
+  securitySchemes:
+    api_key:
+      in: header
+      type: apiKey
+      name: accesstoken
+    app_chk:
+      in: header
+      type: apiKey
+      name: checksum
+  responses:
+    SuccessOnlyResponse:
+      description: Success
+    SuccessResponse:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                default: true
+              data:
+                type: "object"
+    CreatedResponse:
+      description: Created
+    NoContentResponse:
+      description: No Content
+    BadRequestResponse:
+      description: Bad Request
+    DupEntryResponse:
+      description: Entry Already Exists
+    NotFoundResponse:
+      description: Not Found
+    ErrorResponse:
+      description: Error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                default: false
+              code:
+                type: string
+              message:
+                type: "object"

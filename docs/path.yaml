@@ -1,0 +1,3 @@
+# BLOCKCHAIN
+/api/blockchain/blockinfo:
+  $ref: './blockchain/blockchain.blockinfo.yaml'
