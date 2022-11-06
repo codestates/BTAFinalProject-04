@@ -1,3 +1,5 @@
 # BLOCKCHAIN
+/api/blockchain:
+  $ref: './blockchain/blockchain.select.yaml'
 /api/blockchain/blockinfo:
   $ref: './blockchain/blockchain.blockinfo.yaml'
