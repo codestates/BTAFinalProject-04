@@ -104,10 +104,10 @@ router.post("/newWallet", async (req, res) => {
 
       console.log('bech32 : ' + bech32);
 
-      
-      //var returnSeed = {seed:seed}
-      //res.redirect("/main");
       console.log('output 처리함')
+      //var returnSeed = {seed:seed}
+      res.redirect("/main");
+      
       return res.json({ seed, signer, encryptAcc});
     }
     catch(err){
