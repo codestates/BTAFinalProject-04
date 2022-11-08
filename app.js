@@ -23,6 +23,8 @@ app.use(
 app.get('/', function(req, res, next) {
   res.status(200).send({"message": "Mnemonic server is running..."});
 });
+
+
 app.use('/wallet', walletRouter);
 
 // catch 404 and forward to error handler

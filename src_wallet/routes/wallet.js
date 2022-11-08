@@ -54,7 +54,9 @@ const factory = new TransactionFactory();
 router.post("/newWallet", async (req, res) => {
   const { id, password } = req.body;
   try {
-      
+      console.log('id :' + id);
+      console.log('password :' + password);
+
       const seed = Wallet.generateMnemonic()
       console.log('seed : ' + seed);
 
@@ -102,8 +104,10 @@ router.post("/newWallet", async (req, res) => {
 
       console.log('bech32 : ' + bech32);
 
-
-
+      console.log('output 처리함')
+      //var returnSeed = {seed:seed}
+      res.redirect("/main");
+      
       return res.json({ seed, signer, encryptAcc});
     }
     catch(err){

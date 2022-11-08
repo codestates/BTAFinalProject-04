@@ -1,8 +1,14 @@
 {
+<<<<<<< HEAD
+  "name": "Harmony wallet",
+  "version": "0.0.0",
+  "private": true,
+=======
   "name": "didt",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+>>>>>>> d4eb16b00c600c1ce4058dde0ca3a642fb7fc82f
   "scripts": {
     "test": "mocha -r ts-node/register 'test/**/*.ts'",
     "deploy": "gulp dist",

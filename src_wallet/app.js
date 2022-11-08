@@ -4,6 +4,10 @@ const logger = require('morgan');
 const cors = require('cors');
 
 const walletRouter = require('./routes/wallet');
+//const testRouter = require('./src/testDb');
+//const testRoutes = require('./routes/wallet');
+//const index = require('./routes/index');
+
 
 const app = express();
 const port = 3000;
@@ -20,10 +24,23 @@ app.use(
   })
 );
 
+
 app.get('/', function(req, res, next) {
-  res.status(200).send({"message": "Mnemonic server is running..."});
+  //res.status(200).send({"message": "Mnemonic server is running..."});
+  res.sendFile(__dirname + '/view/index.html');
 });
+
+
+app.get('/main', function(req, res, next) {
+  //res.status(200).send({"message": "Mnemonic server is running..."});
+  res.sendFile(__dirname + '/view/main.html');
+});
+
+//app.use('/wallet', walletRouter);
+//app.use('/test', testRouter);
+
 app.use('/wallet', walletRouter);
+//app.use('/', index);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
