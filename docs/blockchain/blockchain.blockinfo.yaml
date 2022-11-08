@@ -1,0 +1,14 @@
+get:
+  tags:
+    - BLOCKCHAIN
+  summary: Block 정보
+  produces:
+  - application/json
+
+  responses:
+    "200":
+      $ref: "../swagger.yaml#/components/responses/SuccessResponse"
+    "204":
+      $ref: "../swagger.yaml#/components/responses/NoContentResponse"
+    "5XX":
+      $ref: "../swagger.yaml#/components/responses/ErrorResponse"
