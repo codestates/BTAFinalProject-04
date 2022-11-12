@@ -1,7 +1,18 @@
 get:
   tags:
-    - BLOCKCHAIN
-  summary: Block 정보
+    - BLOCK
+  summary: Block 리스트 조회
+  parameters: 
+  - name: limit
+    in: query
+    required: true
+    schema: 
+      type: number
+  - name: offset
+    in: query
+    required: true
+    schema: 
+      type: number
   produces:
   - application/json
 

@@ -1,0 +1,20 @@
+get:
+  tags:
+    - BLOCK
+  summary: 특정 Block 조회
+  parameters: 
+  - name: bNum
+    in: query
+    required: true
+    schema: 
+      type: number
+  produces:
+  - application/json
+
+  responses:
+    "200":
+      $ref: "../swagger.yaml#/components/responses/SuccessResponse"
+    "204":
+      $ref: "../swagger.yaml#/components/responses/NoContentResponse"
+    "5XX":
+      $ref: "../swagger.yaml#/components/responses/ErrorResponse"

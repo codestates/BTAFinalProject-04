@@ -1,0 +1,59 @@
+DROP PROCEDURE if EXISTS spGetBlockList;
+DELIMITER $$
+CREATE PROCEDURE spGetBlockList(
+	IN `_limit` INT,
+	IN `_offset` INT
+)
+BEGIN
+	SELECT
+		`bNum`,
+		`hash`,
+		`timestamp`,
+		`txHash`,
+		`proposer`,
+		`gasLimit`,
+		`size`,
+		`difficulty`,
+		`nonce`,
+		`parentHash`,
+		`receiptsRoot`,
+		`stateRoot`,
+		`txRoot`
+	FROM tbBlock
+	LIMIT _limit
+	OFFSET _offset;
+	
+	SELECT 
+		IFNULL(COUNT(*), 0) AS totalCount
+	FROM tbBlock;
+	
+END$$
+DELIMITER ;
+
+DROP PROCEDURE if EXISTS spGetTransactionList;
+DELIMITER $$
+CREATE PROCEDURE spGetTransactionList(
+	IN `_limit` INT,
+	IN `_offset` INT
+)
+BEGIN
+	SELECT
+		`txHash`,
+		`bNum`,
+		`bHash`,
+		`fromAddress`,
+		`toAddress`,
+		`gas`,
+		`gasPrice`,
+		`nonce`,
+		`timestamp`
+	FROM tbTransaction
+	LIMIT _limit
+	OFFSET _offset;
+	
+	SELECT 
+		IFNULL(COUNT(*), 0) AS totalCount
+	FROM tbTransaction;
+	
+END$$
+DELIMITER ;

@@ -1,9 +1,13 @@
 import express from "express";
-import BlockchainController from '../controller/blockchainController';
+import BlockController from '../controller/blockController';
+import TransactionController from '../controller/transactionController';
 
 const router = express.Router();
 
-router.get                     ("/blockchain", BlockchainController.select);
-router.get                     ("/blockchain/blockinfo", BlockchainController.blockInfo);
+router.get                     ("/block/select", BlockController.select);
+router.get                     ("/block/list", BlockController.list);
+
+router.get                     ("/transaction/select", TransactionController.select);
+router.get                     ("/transaction/list", TransactionController.list);
 
 export = router;

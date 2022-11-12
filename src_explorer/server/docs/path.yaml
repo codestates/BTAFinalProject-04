@@ -1,5 +1,11 @@
-# BLOCKCHAIN
-/api/blockchain:
-  $ref: './blockchain/blockchain.select.yaml'
-/api/blockchain/blockinfo:
-  $ref: './blockchain/blockchain.blockinfo.yaml'
+# BLOCK
+/api/block/select:
+  $ref: './block/block.select.yaml'
+/api/block/list:
+  $ref: './block/block.list.yaml'
+
+# TRANSACTION
+/api/transaction/select:
+  $ref: './transaction/transaction.select.yaml'
+/api/transaction/list:
+  $ref: './transaction/transaction.list.yaml'

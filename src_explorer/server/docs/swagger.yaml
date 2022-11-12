@@ -5,8 +5,8 @@ info:
   contact:
   version: "1.0.0"
 tags:
-  - name: "BLOCKCHAIN"
-    description: "BLOCKCHAIN API"
+  - name: "BLOCK"
+    description: "BLOCK API"
 paths:
   $ref: "./path.yaml"
 security:
