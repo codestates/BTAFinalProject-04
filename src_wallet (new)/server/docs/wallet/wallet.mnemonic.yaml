@@ -1,0 +1,12 @@
+get: 
+  tags:
+    - WALLET
+  summary: Generate Mnemonic Code
+  description: ""
+  responses:
+    "200":
+      $ref: "../swagger.yaml#/components/responses/SuccessResponse"
+    "204":
+      $ref: "../swagger.yaml#/components/responses/NoContentResponse"
+    "5XX":
+      $ref: "../swagger.yaml#/components/responses/ErrorResponse" 

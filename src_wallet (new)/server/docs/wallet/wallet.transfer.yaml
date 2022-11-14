@@ -1,0 +1,33 @@
+post: 
+  tags:
+    - WALLET
+  summary: Transfer Coin (ex. ETH)
+  requestBody:
+    description: ""
+    required: true
+    content:
+      application/x-www-form-urlencoded:
+        schema:
+          type: object
+          properties:
+            fromAddress:
+              type: string
+              required: true
+            toAddress:
+              type: string
+              required: true
+            amount:
+              type: string
+              required: true
+            password:
+              type: string
+              required: true
+  responses:
+    "201":
+      $ref: "../swagger.yaml#/components/responses/CreatedResponse"
+    "403":
+      $ref: "../swagger.yaml#/components/responses/DupEntryResponse"      
+    "400":
+      $ref: "../swagger.yaml#/components/responses/BadRequestResponse"      
+    "5XX":
+      $ref: "../swagger.yaml#/components/responses/ErrorResponse"       

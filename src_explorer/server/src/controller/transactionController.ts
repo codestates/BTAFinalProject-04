@@ -2,7 +2,6 @@ import ApiResponse from '../utility/apiResponse';
 import Util from '../utility/util';
 import IController from '../interface/IController';
 import BaseController from './baseController';
-import Web3Util from '../utility/web3Util';
 import TransactionService from '../service/transactionService';
 
 export default class TransactionController extends BaseController {

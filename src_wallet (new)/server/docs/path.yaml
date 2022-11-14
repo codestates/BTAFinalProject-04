@@ -1,0 +1,18 @@
+# Wallet
+/api/wallet/create:
+  $ref: './wallet/wallet.create.yaml'
+/api/wallet/login:
+  $ref: './wallet/wallet.login.yaml'
+/api/wallet/transfer:
+  $ref: './wallet/wallet.transfer.yaml'
+/api/wallet/mnemonic:
+  $ref: './wallet/wallet.mnemonic.yaml'
+/api/wallet/balance:
+  $ref: './wallet/wallet.balance.yaml'
+/api/wallet/privatekey:
+  $ref: './wallet/wallet.privatekey.yaml'
+/api/wallet/mymnemonic:
+  $ref: './wallet/wallet.mymnemonic.yaml'
+
+/api/block/latest:
+  $ref: './block/block.latest.yaml'

@@ -1,0 +1,30 @@
+{
+  "name": "beb-sprint-hdwallet",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "nodemon ./app.js"
+  },
+  "dependencies": {
+    "@ethereumjs/tx": "^4.0.0",
+    "@harmony-js/account": "^0.1.58",
+    "@harmony-js/core": "^0.1.58",
+    "@harmony-js/transaction": "^0.1.58",
+    "bip39": "^3.0.4",
+    "bn.js": "^5.2.1",
+    "cookie-parser": "~1.4.4",
+    "cors": "^2.8.5",
+    "debug": "~2.6.9",
+    "eth-lightwallet": "^4.0.0",
+    "ethereumjs-tx": "^2.1.2",
+    "express": "~4.16.1",
+    "hdkey": "^2.0.1",
+    "morgan": "~1.9.1",
+    "mysql": "^2.18.1",
+    "nodemon": "^2.0.20",
+    "tslib": "^2.4.1",
+    "typescript": "^4.8.4",
+    "web3": "^1.8.0",
+    "web3-eth-accounts": "^1.8.0"
+  }
+}

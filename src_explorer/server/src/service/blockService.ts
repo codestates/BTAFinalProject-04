@@ -1,4 +1,3 @@
-import { Console } from 'winston/lib/winston/transports';
 import DB from '../utility/dbUtil';
 import Web3Util from '../utility/web3Util';
 import TransactionService from './transactionService'
@@ -39,8 +38,8 @@ export default class BlockService {
 
     static async insert(data: any) {
         try {
-            const sql = 'INSERT INTO tbBlock (bNum, hash, timestamp, txHash, gasLimit, gasUsed, size, difficulty, nonce, parentHash, receiptsRoot, stateRoot, txRoot) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-            DB.execute('bta03_final', sql, [data.number, data.hash, data.timestamp, data.transactions, data.gasLimit, data.gasUsed, data.size, data.difficulty, data.nonce, data.parentHash, data.receiptsRoot, data.stateRoot, data.transactionsRoot]);
+            const sql = 'INSERT INTO tbBlock (bNum, hash, timestamp, txTotalCount, gasLimit, gasUsed, size, difficulty, nonce, parentHash, receiptsRoot, stateRoot, txRoot) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+            DB.execute('bta03_final', sql, [data.number, data.hash, data.timestamp, data.txTotalCount, data.gasLimit, data.gasUsed, data.size, data.difficulty, data.nonce, data.parentHash, data.receiptsRoot, data.stateRoot, data.transactionsRoot]);
         }
         catch (err) {
             throw(err);
@@ -50,86 +49,82 @@ export default class BlockService {
     // 최신 Block에 리스트 DB에 저장
     static async updateBlockList() {
         try{
-            console.log("-----------updateBlockList-----------");
-
-            let { bNum } = await BlockService.getLastBlockNum();
-
             web3 = Web3Util.setWeb3();
-            let lastBlock = await Web3Util.getLatestBlockNumber();
+            let nextBlock : any;
 
-            console.log("dbLastBlock:", bNum );
-            console.log("lastBlock:", lastBlock);
+            let lastBlock = await BlockService.getLastBlockNum();
+
+            if(lastBlock === null) {
+                nextBlock = await Web3Util.getLatestBlockNumber();
+            }
+            else {
+                nextBlock = lastBlock.bNum + 1;
+            }
+
+            let recentBlockInfo = await web3.eth.getBlock(nextBlock);
+            let number = recentBlockInfo.number;
+            let hash = recentBlockInfo.hash;
+            let timestamp = recentBlockInfo.timestamp;
+            let gasLimit = recentBlockInfo.gasLimit;
+            let gasUsed = recentBlockInfo.gasUsed;
+            let size = recentBlockInfo.size;
+            let difficulty = recentBlockInfo.difficulty;
+            let nonce = recentBlockInfo.nonce;
+            let parentHash = recentBlockInfo.parentHash;
+            let receiptsRoot = recentBlockInfo.receiptsRoot;
+            let stateRoot = recentBlockInfo.stateRoot;
+            let transactionsRoot = recentBlockInfo.transactionsRoot;
+            let txTotalCount = recentBlockInfo.transactions.length;
+
+            this.insert({ 
+                number: number,
+                hash: hash,
+                timestamp: timestamp,
+                txTotalCount: txTotalCount,
+                gasLimit: gasLimit,
+                gasUsed: gasUsed,
+                size: size,
+                difficulty: difficulty,
+                nonce: nonce,
+                parentHash: parentHash,
+                receiptsRoot: receiptsRoot,
+                stateRoot: stateRoot,
+                transactionsRoot: transactionsRoot,
+            });
+
+            // txHash 저장
+            for(let i = 0; i < recentBlockInfo.transactions.length; i++) {
+                let txHash = recentBlockInfo.transactions[i];
+                const transaction = await web3.eth.getTransaction(txHash);
+                const blockTimestamp = timestamp;
+
+                let { 
+                    hash,
+                    blockNumber,
+                    blockHash,
+                    from,
+                    to,
+                    gas,
+                    gasPrice,
+                    nonce,
+                } : any = transaction;
             
-            // for(let i = bNum + 1; i <= lastBlock; i++) {
-            for(let i = lastBlock; i <= lastBlock; i++) {
-
-                let blockInfo = await web3.eth.getBlock(33652839);
-
-                let number = blockInfo.number;
-                let hash = blockInfo.hash;
-                let timestamp = blockInfo.timestamp;
-                let gasLimit = blockInfo.gasLimit;
-                let gasUsed = blockInfo.gasUsed;
-                let size = blockInfo.size;
-                let difficulty = blockInfo.difficulty;
-                let nonce = blockInfo.nonce;
-                let parentHash = blockInfo.parentHash;
-                let receiptsRoot = blockInfo.receiptsRoot;
-                let stateRoot = blockInfo.stateRoot;
-                let transactionsRoot = blockInfo.transactionsRoot;
-
-                for(let j = 0; j < blockInfo.transactions.length; j++) {
-                    let transactions = blockInfo.transactions[j];
-
-                    console.log("transactions:", transactions);
-                    const transaction = await web3.eth.getTransaction(transactions);
-
-                    console.log("transaction----:", transaction);
-                    console.log("transaction blockHash----:", transaction.blockHash);
-                    let { 
-                            hash,
-                            blockNumber,
-                            blockHash,
-                            from,
-                            to,
-                            gas,
-                            gasPrice,
-                            nonce,
-                            timestamp
-                        } : any = transaction;
-            
-                    TransactionService.insert({
-                        txHash: hash,
-                        bNum: blockNumber,
-                        bHash: blockHash,
-                        fromAddress: from,
-                        toAddress: to,
-                        gas: gas,
-                        gasPrice: gasPrice,
-                        nonce: nonce,
-                        timestamp: timestamp
-                    });
-                }
-
-                // this.insert({ 
-                //     number: number,
-                //     hash: hash,
-                //     timestamp: timestamp,
-                //     transactions: transactions,
-                //     gasLimit: gasLimit,
-                //     gasUsed: gasUsed,
-                //     size: size,
-                //     difficulty: difficulty,
-                //     nonce: nonce,
-                //     parentHash: parentHash,
-                //     receiptsRoot: receiptsRoot,
-                //     stateRoot: stateRoot,
-                //     transactionsRoot: transactionsRoot,
-                // });
-            } 
+                TransactionService.insert({
+                    txHash: hash,
+                    bNum: blockNumber,
+                    bHash: blockHash,
+                    fromAddress: from,
+                    toAddress: to,
+                    gas: gas,
+                    gasPrice: gasPrice,
+                    nonce: nonce,
+                    timestamp: blockTimestamp
+                });
+                
+            }
         }
         catch(err: any) {
-            throw(err)
+            console.log(err);
         }
     }
 }

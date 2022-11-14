@@ -1,0 +1,28 @@
+post: 
+  tags:
+    - WALLET
+  summary: Create Wallet
+  requestBody:
+    description: ""
+    required: true
+    content:
+      application/x-www-form-urlencoded:
+        schema:
+          type: object
+          properties:
+            password:
+              type: string
+              required: true
+            mnemonicPhrase:
+              type: string
+              required: true
+            
+  responses:
+    "201":
+      $ref: "../swagger.yaml#/components/responses/CreatedResponse"
+    "403":
+      $ref: "../swagger.yaml#/components/responses/DupEntryResponse"      
+    "400":
+      $ref: "../swagger.yaml#/components/responses/BadRequestResponse"      
+    "5XX":
+      $ref: "../swagger.yaml#/components/responses/ErrorResponse"       

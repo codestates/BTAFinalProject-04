@@ -6,7 +6,6 @@ const router = express.Router();
 
 router.get                     ("/block/select", BlockController.select);
 router.get                     ("/block/list", BlockController.list);
-
 router.get                     ("/transaction/select", TransactionController.select);
 router.get                     ("/transaction/list", TransactionController.list);
 
