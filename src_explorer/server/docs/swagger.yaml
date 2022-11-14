@@ -1,12 +1,12 @@
 openapi: "3.0.3"
 info:
-  title: "BTA03_dApp_Back"
-  description: "BTA03_dApp API"
+  title: "BTA03_Final_Back"
+  description: "BTA03_Final API"
   contact:
   version: "1.0.0"
 tags:
-  - name: "BLOCKCHAIN"
-    description: "BLOCKCHAIN API"
+  - name: "BLOCK"
+    description: "BLOCK API"
 paths:
   $ref: "./path.yaml"
 security:

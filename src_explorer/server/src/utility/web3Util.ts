@@ -1,14 +1,10 @@
 import Web3 from 'web3';
-import { Transaction } from 'ethereumjs-tx';
-import logger from '../config/logger';
 
 let web3 : any;
-// const chain : string = "baobab";
 
 export default class Web3Util{
 
     static setWeb3 = () => {
-        // https://api.s0.t.hmny.io
         return new Web3(new Web3.providers.HttpProvider("https://api.s0.t.hmny.io"));
     }
 
@@ -28,9 +24,9 @@ export default class Web3Util{
         try{
             web3 = Web3Util.setWeb3();
             let lastBlock = await this.getLatestBlockNumber();
-            let blcokInfo = await web3.eth.getBlock(lastBlock, false, (err: any, block: any) => {
-            });
-            return blcokInfo;          
+            let blockInfo = await web3.eth.getBlock(lastBlock);
+            return blockInfo;
+
         }
         catch(err: any) {
             throw(err)

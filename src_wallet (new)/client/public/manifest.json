@@ -1,0 +1,20 @@
+{
+    "manifest_version": 3,
+    "name": "HARMONY Wallet Chrome Extension",
+    "description": "A Chrome Extension Wallet for HARMONY",
+    "version": "0.1.0",
+    "action": {
+        "default_popup": "index.html",
+        "default_title": "HARMONY Wallet Chrome Extension"
+    },
+    "permissions": [
+        "storage"
+    ],
+    "icons": {
+        "16": "palm_logo_16.png",
+        "32": "palm_logo_32.png",
+        "48": "palm_logo_48.png",
+        "128": "palm_logo_128.png",
+        "192": "palm_logo_192.png"
+    }
+}
